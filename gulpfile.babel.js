@@ -9,19 +9,12 @@ const routes = {
   },
 };
 
-function pug(done) {
+const pug = () =>
   gulp.src(routes.pug.src).pipe(gpug()).pipe(gulp.dest(routes.pug.dest));
-  done();
-}
 
-function prepare(done) {
-  del([routes.pug.dest]);
-  done();
-}
+const clean = () => del([routes.pug.dest]);
 
-function compile(done) {
-  gulp.series([pug]);
-  done();
-}
+const prepare = gulp.series([clean]);
+const compile = gulp.series([pug]);
 
 export const dev = gulp.series([prepare, compile]);
