@@ -4,6 +4,8 @@ import del from 'del';
 import ws from 'gulp-webserver';
 import image from 'gulp-image';
 import sass from 'gulp-sass';
+import autoprefixer from 'gulp-autoprefixer';
+import miniCSS from 'gulp-csso';
 
 sass.compiler = require('node-sass');
 var sourcemaps = require('gulp-sourcemaps');
@@ -41,6 +43,8 @@ const styles = () => {
     .src(routes.scss.src)
     .pipe(sourcemaps.init())
     .pipe(sass().on('error', sass.logError))
+    .pipe(autoprefixer())
+    .pipe(miniCSS())
     .pipe(sourcemaps.write('./maps'))
     .pipe(gulp.dest(routes.scss.dest));
 };
