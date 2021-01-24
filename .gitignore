@@ -107,3 +107,6 @@ dist
 .next
 build/
 .env
+
+# Deploy
+.publish
