@@ -3,6 +3,10 @@ import gpug from 'gulp-pug';
 import del from 'del';
 import ws from 'gulp-webserver';
 import image from 'gulp-image';
+import sass from 'gulp-sass';
+
+sass.compiler = require('node-sass');
+var sourcemaps = require('gulp-sourcemaps');
 
 const routes = {
   pug: {
@@ -13,6 +17,11 @@ const routes = {
   img: {
     src: 'src/img/*',
     dest: 'build/img',
+  },
+  scss: {
+    watch: 'src/scss/**/*.scss',
+    src: 'src/scss/app.scss',
+    dest: 'build/css',
   },
 };
 
@@ -27,12 +36,23 @@ const webserver = () =>
 const img = () =>
   gulp.src(routes.img.src).pipe(image()).pipe(gulp.dest(routes.img.dest));
 
+const styles = () => {
+  return gulp
+    .src(routes.scss.src)
+    .pipe(sourcemaps.init())
+    .pipe(sass().on('error', sass.logError))
+    .pipe(sourcemaps.write('./maps'))
+    .pipe(gulp.dest(routes.scss.dest));
+};
+
 const watch = () => {
   gulp.watch(routes.pug.watch, pug);
+  gulp.watch(routes.img.src, img);
+  gulp.watch(routes.scss.watch, styles);
 };
 
 const prepare = gulp.series([clean, img]);
-const compile = gulp.series([pug]);
+const compile = gulp.series([pug, styles]);
 const run = gulp.parallel([webserver, watch]);
 
 export const dev = gulp.series([prepare, compile, run]);
